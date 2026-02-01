@@ -8,3 +8,6 @@ export default {
   update: (id, emp) => axios.put(`${BASE}/update/${id}`, emp),
   delete: (id) => axios.delete(`${BASE}/delete/${id}`)
 };
+
+
+

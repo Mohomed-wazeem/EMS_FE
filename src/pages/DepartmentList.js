@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DepartmentService from "../services/DepartmentService";
+import EmployeeService from "../services/EmployeeService";
 
 function DepartmentList() {
   const [departments, setDepartments] = useState([]);
+  const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
     loadDepartments();
+    loadEmployees();
   }, []);
 
   const loadDepartments = () => {
@@ -15,7 +18,22 @@ function DepartmentList() {
     });
   };
 
+  const loadEmployees = () => {
+    EmployeeService.getAll().then(res => {
+      setEmployees(res.data);
+    });
+  };
+
+  const isDepartmentUsed = (deptId) => {
+    return employees.some(emp => emp.department?.id === deptId);
+  };
+
   const deleteDepartment = (id) => {
+    if (isDepartmentUsed(id)) {
+      alert("Cannot delete this department. Employees are assigned to it.");
+      return;
+    }
+
     if (window.confirm("Are you sure you want to delete this department?")) {
       DepartmentService.delete(id).then(() => loadDepartments());
     }
@@ -43,24 +61,36 @@ function DepartmentList() {
           <tbody>
             {departments.length === 0 ? (
               <tr>
-                <td colSpan="4" className="text-center">No Departments Found</td>
+                <td colSpan="4" className="text-center">
+                  No Departments Found
+                </td>
               </tr>
             ) : (
-              departments.map(dept => (
-                <tr key={dept.id}>
-                  <td>{dept.id}</td>
-                  <td>{dept.name}</td>
-                  <td>{dept.location}</td>
-                  <td>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => deleteDepartment(dept.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
+              departments.map(dept => {
+                const used = isDepartmentUsed(dept.id);
+
+                return (
+                  <tr key={dept.id}>
+                    <td>{dept.id}</td>
+                    <td>{dept.name}</td>
+                    <td>{dept.location}</td>
+                    <td>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        disabled={used}
+                        onClick={() => deleteDepartment(dept.id)}
+                        title={
+                          used
+                            ? "Department is assigned to employees"
+                            : "Delete department"
+                        }
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

@@ -43,7 +43,7 @@ function AddDepartment() {
             />
           </div>
 
-          <button className="btn btn-primary w-100">Save Department</button>
+          <button className="btn btn bg-success text-white w-100">Save Department</button>
         </form>
       </div>
     </div>

@@ -54,7 +54,7 @@ function AddAsset() {
             />
           </div>
 
-          <button className="btn btn-primary w-100">Save Asset</button>
+          <button className="btn btn bg-success text-white w-100">Save Asset</button>
         </form>
       </div>
     </div>
